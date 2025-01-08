@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: report-collector
+spec:
+  # run every 1 minute
+  schedule: "* * * * *"
+  #! prevent from start new jobs when previous job is still running !
+  # https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: report-collector
+            image: report-collector:latest
+            imagePullPolicy: IfNotPresent # for minikube using local image, https://minikube.sigs.k8s.io/docs/handbook/pushing/
+            env:
+            - name: REPORT_API_URL
+              # get this value using dns lookup util, https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/
+              # kubectl exec -i -t dnsutils -- nslookup report-apis-service
+              value: http://report-apis-service.default.svc.cluster.local:8080
+          restartPolicy: OnFailure

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: report-apis-service
+spec:
+  selector:
+    app: report-apis
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: report-apis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: report-apis
+  template:
+    metadata:
+      labels:
+        app: report-apis
+    spec:
+      containers:
+      - name: report-apis
+        image: report-apis:latest
+        imagePullPolicy: IfNotPresent # for minikube using local image, https://minikube.sigs.k8s.io/docs/handbook/pushing/
+        ports:
+          - containerPort: 8080
