@@ -29,6 +29,13 @@
     - if `report is not ready`, retry every 10 seconds
     - if succeeds, print the report and exit
 
+## Result
+- Report Collector is scheduled on time `T`, `T+1`, `T+2`, ... (minute)
+- When the Report APIs is normal, the report collector get the report and finish immediately.
+- When the Report APIs is under heavy load, the report collector, let's say `T`, work more than 1 minute.
+- With `concurrencyPolicy: Forbid` setting, The subsequent report collectors `T+1`, `T+2`, ... will wait until `T` is finished.
+- The concurrency limiting is working as expected.
+
 ---
 
 ## Setup
